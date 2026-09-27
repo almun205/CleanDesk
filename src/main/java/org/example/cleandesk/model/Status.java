@@ -22,6 +22,7 @@ public enum Status {
         return ordinal() < values().length - 1 ? Optional.of(values()[ordinal() + 1]) : Optional.empty();
     }
 
+
     public Optional<Status> previous() {
         return ordinal() > 0 ? Optional.of(values()[ordinal() - 1]) : Optional.empty();
     }
