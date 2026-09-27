@@ -5,6 +5,7 @@ import org.example.cleandesk.model.CardType;
 import org.example.cleandesk.model.Priority;
 
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -53,10 +54,34 @@ final class NewCardDialog {
         form.add(priorityBox);
 
         String dialogTitle = existing == null ? "Neue Karte" : "Karte bearbeiten";
-        int result = JOptionPane.showConfirmDialog(parent, form, dialogTitle,
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+        JOptionPane optionPane = new JOptionPane(form, JOptionPane.PLAIN_MESSAGE,
+                JOptionPane.OK_CANCEL_OPTION);
+        JDialog dialog = new JDialog(JOptionPane.getFrameForComponent(parent), dialogTitle, true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setContentPane(optionPane);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
+        optionPane.addPropertyChangeListener(event -> {
+            if (!dialog.isVisible() || !JOptionPane.VALUE_PROPERTY.equals(event.getPropertyName())) {
+                return;
+            }
+            Object value = optionPane.getValue();
+            if (JOptionPane.UNINITIALIZED_VALUE.equals(value)) {
+                return;
+            }
+            if (Integer.valueOf(JOptionPane.OK_OPTION).equals(value) && titleField.getText().isBlank()) {
+                optionPane.setValue(JOptionPane.UNINITIALIZED_VALUE);
+                JOptionPane.showMessageDialog(dialog, "Bitte gib einen Titel ein.",
+                        "Titel erforderlich", JOptionPane.WARNING_MESSAGE);
+                titleField.requestFocusInWindow();
+                return;
+            }
+            dialog.dispose();
+        });
+        dialog.setVisible(true);
+        dialog.dispose();
 
-        if (result != JOptionPane.OK_OPTION || titleField.getText().isBlank()) {
+        if (!Integer.valueOf(JOptionPane.OK_OPTION).equals(optionPane.getValue())) {
             return Optional.empty();
         }
         return Optional.of(new Input(

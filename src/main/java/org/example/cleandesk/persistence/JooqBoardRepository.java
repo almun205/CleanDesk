@@ -7,6 +7,12 @@ import static org.example.cleandesk.persistence.SqlTables.BOARD;
 import static org.example.cleandesk.persistence.SqlTables.BOARD_ID;
 import static org.example.cleandesk.persistence.SqlTables.BOARD_NAME;
 
+/**
+ * Repository für Board-Objekte, implementiert mit JOOQ.
+ * this class car about the board table in the database and provides methods to find,
+ * create, and rename boards.
+ *
+ */
 public final class JooqBoardRepository {
 
     private final DSLContext dsl;
